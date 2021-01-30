@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+
+  ## --------------------------------------------------
+  ## | Web Server - php:8.0.1-apache
+  ## --------------------------------------------------
+  order-core:
+    build:
+      context: .docker/app
+      dockerfile: Dockerfile
+      args:
+        - WWW_DATA_USER_ID=${WWW_DATA_USER_ID}
+    container_name: order-core
+    volumes:
+      - ./app/:/var/www/
+      - ./.docker/app/config/php.ini:/usr/local/etc/php/php.ini
+      - ./.data/app/log/webserver:/var/log/apache2
+    environment:
+      - WWW_DATA_USER_ID=${WWW_DATA_USER_ID}
+      - EXCLUDE_PORTS=443
+    ports:
+      - "${BACKEND_PORT}:80"
+    restart: always
+    depends_on:
+      - order-db
+    env_file:
+      - .env
+
+  ## --------------------------------------------------
+  ## | Database - MySQL latest (8.0.22 in development time)
+  ## --------------------------------------------------
+  order-db:
+    image: mysql:latest
+    container_name: order-db
+    volumes:
+      - ./.data/db:/var/lib/mysql
+    ports:
+      - "${DB_HOST_PORT}:3306"
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${DB_DATABASE}
+      - MYSQL_USER=${DB_USERNAME}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+
+  ## --------------------------------------------------
+  ## | Swagger - API Documentation
+  ## --------------------------------------------------
+  order-swagger:
+    image: swaggerapi/swagger-ui
+    container_name: order-swagger
+    ports:
+      - "${SWAGGER_PORT}:8080"
+    volumes:
+      - ./.data/swagger/:/swagger
+    environment:
+      SWAGGER_JSON: /swagger/openapi.yaml
