@@ -22,7 +22,7 @@ use Symfony\Component\HttpKernel\Exception\HttpException as SymfonyHttpException
 
 class Handler extends ExceptionHandler
 {
-    protected array $appExceptions = [
+    protected $appExceptions = [
         NotFoundHttpException::class,
         ModelNotFoundException::class,
         ValidationException::class,
