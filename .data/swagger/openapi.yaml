@@ -11,16 +11,16 @@ servers:
   - url: http://localhost:9080
     description: Local Server
 paths:
-  /api/transaction:
+  /api/order/price:
     post:
       tags:
-        - Auth
-      summary: "Store transaction endpoint"
-      description: "This endpoint stores two transactions; one for the original transaction and another one for the commission. Finally it returns both of them"
-      operationId: "transaction-store"
+        - Order
+      summary: "Returns a shopping cart object with price."
+      description: "This endpoint applies discount rules on a shopping cart and calculates the total price and finally returns the shopping cart."
+      operationId: "order-price"
       security: []
       requestBody:
-        $ref: "#/components/requestBodies/StoreTransactionRequest"
+        $ref: "#/components/requestBodies/GetOrderPriceRequest"
       responses:
         200:
           description: "Success"
@@ -30,22 +30,7 @@ paths:
                 type: object
                 properties:
                   data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/Transaction'
-        400:
-          description: "Insufficient credit"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    example: "InsufficientCreditException"
-                  message:
-                    type: string
-                    example: "There is not enough balance in the wallet."
+                    $ref: '#/components/schemas/ShoppingCart'
         406:
           description: "Invalid accept header"
           content:
@@ -72,22 +57,17 @@ paths:
                   message:
                     type: object
                     properties:
-                      source_wallet_id:
+                      cart:
                         type: array
                         items:
                           type: string
                           example: "One or more than one validation error"
-                      destination_wallet_id:
+                      cart.*.product_id:
                         type: array
                         items:
                           type: string
                           example: "One or more than one validation error"
-                      amount:
-                        type: array
-                        items:
-                          type: string
-                          example: "One or more than one validation error"
-                      description:
+                      cart.*.amount:
                         type: array
                         items:
                           type: string
@@ -95,121 +75,71 @@ paths:
       deprecated: false
 components:
   requestBodies:
-    StoreTransactionRequest:
+    GetOrderPriceRequest:
       required: true
       content:
         application/json:
           schema:
-            required:
-              - source_wallet_id
-              - destination_wallet_id
-              - amount
-            type: object
-            properties:
-              source_wallet_id:
-                type: number
-                format: int32
-                example: 2
-              destination_wallet_id:
-                type: number
-                format: int32
-                example: 3
-              amount:
-                type: number
-                format: float
-                example: 100
-              description:
-                type: string
-                example: "Lorem Ipsum"
+            $ref: '#/components/schemas/GetOrderPriceRequestBody'
   schemas:
-    User:
-      description: User model
+    GetOrderPriceRequestBody:
+      description: "Get shopping cart total price request body"
       type: object
+      required:
+        - cart
       properties:
-        id:
-          type: integer
-          format: int32
-          readOnly: true
-          example: 1
-        name:
-          type: string
-          example: "John Doe"
-        email:
-          type: string
-          format: email
-          example: "john@doe.com"
-        createdAt:
-          type: string
-          format: dateTime
-          example: "2020-09-14 00:00:00"
-          readOnly: true
-        updatedAt:
-          type: string
-          format: dateTime
-          example: "2020-09-14 00:00:00"
-          readOnly: true
-    Wallet:
-      description: Wallet model
+        cart:
+          type: array
+          items:
+            $ref: "#/components/schemas/ShoppingCartItemRequestBody"
+    ShoppingCartItemRequestBody:
+      description: "Get shopping cart item total price request body"
       type: object
+      required:
+        - product_id
+        - amount
       properties:
-        id:
+        product_id:
           type: integer
-          format: int32
-          readOnly: true
           example: 1
-        name:
-          type: string
-          example: "Primary"
-        balance:
-          type: number
-          format: float
-          example: 1000.50
-        is_active:
-          type: boolean
-          example: true
-        user_id:
-          type: number
-          format: int32
-          example: 1
-        createdAt:
-          type: string
-          format: dateTime
-          example: "2020-09-14 00:00:00"
-          readOnly: true
-        updatedAt:
-          type: string
-          format: dateTime
-          example: "2020-09-14 00:00:00"
-          readOnly: true
-    Transaction:
-      description: Transaction model
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int32
-          readOnly: true
-          example: 1
-        source_wallet_id:
-          type: number
-          format: int32
-          example: 2
-        destination_wallet_id:
-          type: number
-          format: int32
-          example: 3
         amount:
+          type: integer
+          example: 1
+    ShoppingCart:
+      description: "ShoppingCart model"
+      type: object
+      properties:
+        cart:
+          type: array
+          items:
+            $ref: '#/components/schemas/ShoppingCartItem'
+        total_price:
           type: number
           format: float
-          example: "10.50"
-        type_description:
+          example: "100.25"
+    ShoppingCartItem:
+      description: "ShoppingCartItem model"
+      type: object
+      properties:
+        amount:
+          type: integer
+          example: "1"
+        product:
+          $ref: '#/components/schemas/Product'
+    Product:
+      description: "Product entity"
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
           type: string
-          enum:
-            - "commission"
-            - "transfer"
-        description:
-          type: string
-          example: "Lorem Ipsum..."
+          example: "foo"
+        price:
+          type: number
+          format: float
+          example: "10.25"
         createdAt:
           type: string
           format: dateTime
