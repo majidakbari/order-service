@@ -34,7 +34,7 @@ class GetOrderPriceAction
         $rules = ($this->findActiveRulesForShoppingCartService)($productIds);
 
         return $shoppingCart->setTotalPrice(
-            ($this->applyRulesToShoppingCartService)($shoppingCart, $rules)
+            ($this->applyRulesToShoppingCartService)($shoppingCart, $rules, $products)
         );
     }
 }

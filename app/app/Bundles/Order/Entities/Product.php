@@ -2,11 +2,19 @@
 
 namespace App\Bundles\Order\Entities;
 
+use stdClass;
 use Database\Factories\ProductFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
+/**
+ * Class Product
+ * @package App\Bundles\Order\Entities
+ * @property int id
+ * @property string name
+ * @property-read stdClass pivot
+ */
 class Product extends Model
 {
     use HasFactory;
