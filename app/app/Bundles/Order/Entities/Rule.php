@@ -2,6 +2,7 @@
 
 namespace App\Bundles\Order\Entities;
 
+use Database\Factories\RuleFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -13,5 +14,10 @@ class Rule extends Model
     public function rules(): BelongsToMany
     {
         return $this->belongsToMany(Product::class)->withPivot('amount');
+    }
+
+    public static function newFactory(): RuleFactory
+    {
+        return RuleFactory::new();
     }
 }
