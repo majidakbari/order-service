@@ -62,7 +62,7 @@ Under `storage/logs` directory, you can find detailed logs of API calls.
 Models and endpoints are fully specified using swagger openApi.
 Navigate to `localhost:{{SWAGGER_PORT}}` (default equals to http://localhost:9093) on your host to see API documentation.
 
-### Suggestions
+## Suggestions
 Based on the project scope, some important topics were skipped, they are as follows.
 * Having unit and feature tests for the application.
 * Having pricing strategy (At the moment the very first rules that match a shopping cart will be applied; We could have strategies to choose the cheapest or even the most expensive basket after applying the rules).
