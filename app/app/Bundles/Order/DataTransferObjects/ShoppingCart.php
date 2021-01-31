@@ -2,9 +2,15 @@
 
 namespace App\Bundles\Order\DataTransferObjects;
 
+/**
+ * Class ShoppingCart
+ * @package App\Bundles\Order\DataTransferObjects
+ * @property array cart
+ * @property float totalPrice
+ */
 class ShoppingCart
 {
-    public function __construct(public array $cart)
+    public function __construct(public array $cart, public ?float $totalPrice = null)
     {
     }
 
@@ -16,5 +22,11 @@ class ShoppingCart
         }
 
         return new static($items);
+    }
+
+    public function setTotalPrice(float $totalPrice): self
+    {
+        $this->totalPrice = $totalPrice;
+        return $this;
     }
 }

@@ -2,9 +2,9 @@
 
 namespace App\Bundles\Order\Controllers;
 
-use Illuminate\Http\JsonResponse;
 use App\Bundles\Order\Actions\GetOrderPriceAction;
 use App\Bundles\Order\Requests\GetOrderPriceRequest;
+use App\Bundles\Order\Resources\ShoppingCartResource;
 use App\Bundles\Order\DataTransferObjects\ShoppingCart;
 
 class GetOrderPriceController
@@ -13,10 +13,10 @@ class GetOrderPriceController
     {
     }
 
-    public function __invoke(GetOrderPriceRequest $request): JsonResponse
+    public function __invoke(GetOrderPriceRequest $request): ShoppingCartResource
     {
         $result = ($this->getOrderPriceAction)(ShoppingCart::fromArray($request->all()));
 
-        return response()->json($result);
+        return new ShoppingCartResource($result);
     }
 }

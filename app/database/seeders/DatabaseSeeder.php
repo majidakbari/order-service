@@ -10,10 +10,13 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        Product::factory()
+        Rule::factory()
+            ->active()
+            ->count(10)
             ->hasAttached(
-                Rule::factory()->active()->count(10),
+                Product::factory()->available()->count(5),
                 ['amount' => rand(1, 5)]
-            )->available()->count(5)->create();
+            )
+            ->create();
     }
 }

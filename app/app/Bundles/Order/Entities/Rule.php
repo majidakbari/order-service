@@ -11,7 +11,7 @@ class Rule extends Model
 {
     use HasFactory;
 
-    public function rules(): BelongsToMany
+    public function products(): BelongsToMany
     {
         return $this->belongsToMany(Product::class)->withPivot('amount');
     }
